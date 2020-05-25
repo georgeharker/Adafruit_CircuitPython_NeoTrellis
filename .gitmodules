@@ -1,0 +1,2 @@
+[submodule "submodules/Adafruit_CircuitPython_NeoTrellis"]
+	url = git@github.com:georgeharker/Adafruit_CircuitPython_NeoTrellis.git
