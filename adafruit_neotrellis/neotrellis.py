@@ -55,20 +55,19 @@ _NEO_TRELLIS_ADDR = const(0x2E)
 
 _NEO_TRELLIS_NEOPIX_PIN = const(3)
 
-_NEO_TRELLIS_NUM_ROWS = const(4)
-_NEO_TRELLIS_NUM_COLS = const(4)
-_NEO_TRELLIS_NUM_KEYS = const(16)
+_NEO_TRELLIS_NUM_ROWS = const(8)
+_NEO_TRELLIS_NUM_COLS = const(8)
+_NEO_TRELLIS_NUM_KEYS = const(64)
 
-_NEO_TRELLIS_MAX_CALLBACKS = const(32)
+_NEO_TRELLIS_MAX_CALLBACKS = const(64)
 
 
 def _key(xval):
-    return int(int(xval / 4) * 8 + (xval % 4))
+    return int(int(xval / 8) * 8 + (xval % 8))
 
 
 def _seesaw_key(xval):
-    return int(int(xval / 8) * 4 + (xval % 8))
-
+    return int(int(xval / 8) * 8 + (xval % 8))
 
 class NeoTrellis(Keypad):
     """Driver for the Adafruit NeoTrellis."""
