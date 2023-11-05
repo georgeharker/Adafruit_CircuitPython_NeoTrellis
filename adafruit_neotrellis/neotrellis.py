@@ -95,10 +95,10 @@ class NeoTrellis(Keypad):
         if available > 0:
             available = available + 2
             buf = self.read_keypad(available)
-            for raw in buf:
+            for response in buf:
+                raw = response.data
                 evt = KeyEvent(_seesaw_key((raw >> 2) & 0x3F), raw & 0x3)
-                if (
-                    evt.number < _NEO_TRELLIS_NUM_KEYS
-                    and self.callbacks[evt.number] is not None
-                ):
+                if (evt.number < _NEO_TRELLIS_NUM_KEYS and
+                        self.callbacks[evt.number] is not None):
                     self.callbacks[evt.number](evt)
+
