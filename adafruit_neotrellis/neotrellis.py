@@ -92,7 +92,10 @@ class NeoTrellis(Keypad):
         available = self.count
         sleep(0.0005)
         if available > 0:
-            available = available + 2
+            # FIXME: used to read
+            # available = available + 2
+            # why??
+
             buf = self.read_keypad(available)
             for response in buf:
                 raw = response.data
