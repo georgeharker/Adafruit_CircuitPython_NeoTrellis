@@ -130,10 +130,17 @@ class MultiTrellis:
         pad = self._key_pads[y][x]
         pad.pixels[pad.key_index(x, y)] = color
 
+    @property
+    def data_pending(self) -> bool:
+        for py in range(self._rows):
+            for px in range(self._cols):
+                available = self._trelli[py][px].count
+                if available > 0:
+                    return True
+        return False
+
     def sync(self):
         """Read all trellis boards in the matrix and call any callbacks"""
-        for _n in range(self._rows):
-            for _m in range(self._cols):
-
-                _t = self._trelli[_n][_m]
-                _t.sync()
+        for py in range(self._rows):
+            for px in range(self._cols):
+                self._trelli[py][px].sync()
