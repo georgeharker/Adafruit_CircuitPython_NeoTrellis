@@ -29,11 +29,9 @@ interface for connecting together multiple NeoTrellis boards.
 __version__ = "0.0.0-auto.0"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_neotrellis.git"
 
-from typing import List, Dict, Tuple, Sequence
-from time import sleep
-from micropython import const
+from typing import List, Sequence
+
 from adafruit_neotrellis.neotrellis import NeoTrellis
-from adafruit_seesaw.keypad import KeyEvent
 
 
 class MultiTrellis:
@@ -73,7 +71,8 @@ class MultiTrellis:
 
         self._width = col_size_sum[self._cols - 1]
         self._height = row_size_sum[self._rows - 1]
-        self._key_pads : List[List[NeoTrellis]] = [[None for _ in range(self._width)]
+        self._key_pads: List[List[NeoTrellis]] = [
+            [None for _ in range(self._width)]
             for _ in range(self._height)]
 
         for py in range(self._rows):
@@ -95,7 +94,7 @@ class MultiTrellis:
 
     @property
     def rows(self):
-        return self._rowa
+        return self._rows
 
     @property
     def cols(self):
