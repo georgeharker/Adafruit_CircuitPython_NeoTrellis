@@ -47,8 +47,9 @@ __version__ = "0.0.0-auto.0"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_neotrellis.git"
 
 from time import sleep
+from typing import List, Callable
 from micropython import const
-from adafruit_seesaw.keypad import Keypad, KeyEvent
+from adafruit_seesaw.keypad import Keypad, KeyEvent, SeesawKeyResponse, ResponseType
 from adafruit_seesaw.neopixel import NeoPixel
 
 _NEO_TRELLIS_ADDR = const(0x2E)
@@ -59,21 +60,27 @@ _NEO_TRELLIS_NUM_ROWS = const(8)
 _NEO_TRELLIS_NUM_COLS = const(8)
 _NEO_TRELLIS_NUM_KEYS = const(64)
 
-_NEO_TRELLIS_MAX_CALLBACKS = const(64)
-
-
-def _key(xval):
-    return int(int(xval / 8) * 8 + (xval % 8))
-
-
-def _seesaw_key(xval):
-    return int(int(xval / 8) * 8 + (xval % 8))
-
 class NeoTrellis(Keypad):
     """Driver for the Adafruit NeoTrellis."""
 
-    def __init__(self, i2c_bus, interrupt=False, addr=_NEO_TRELLIS_ADDR, drdy=None):
+    width: int
+    height: int
+    x_base: int
+    y_base: int
+    interrupt_enabled: bool
+    callbacks: List[Callable[[KeyEvent], None]]
+    pixels: List[NeoPixel]
+
+    def __init__(self, i2c_bus, interrupt=False,
+                 addr=_NEO_TRELLIS_ADDR, drdy=None,
+                 width=_NEO_TRELLIS_NUM_COLS,
+                 height=_NEO_TRELLIS_NUM_ROWS,
+                 x_base = 0, y_base = 0):
         super().__init__(i2c_bus, addr, drdy)
+        self.width = width
+        self.height = height
+        self.x_base = x_base
+        self.y_base = y_base
         self.interrupt_enabled = interrupt
         self.callbacks = [None] * _NEO_TRELLIS_NUM_KEYS
         self.pixels = NeoPixel(self, _NEO_TRELLIS_NEOPIX_PIN, _NEO_TRELLIS_NUM_KEYS)
@@ -84,23 +91,28 @@ class NeoTrellis(Keypad):
            NeoTrellis.EDGE_FALLING or NeoTrellis.EDGE_RISING. enable should be set
            to True if the event is to be enabled, or False if the event is to be
            disabled."""
-        self.set_event(_key(key), edge, enable)
+        self.set_event(key, edge, enable)
+
+    def clear(self):
+        self.pixels.fill((0, 0, 0))
 
     def sync(self):
         """read any events from the Trellis hardware and call associated
            callbacks"""
         available = self.count
-        sleep(0.0005)
+        sleep(0.0005)       # FIXME: resolve
         if available > 0:
-            # FIXME: used to read
-            # available = available + 2
-            # why??
-
             buf = self.read_keypad(available)
-            for response in buf:
-                raw = response.data
-                evt = KeyEvent(_seesaw_key((raw >> 2) & 0x3F), raw & 0x3)
-                if (evt.number < _NEO_TRELLIS_NUM_KEYS and
-                        self.callbacks[evt.number] is not None):
-                    self.callbacks[evt.number](evt)
+            for r in buf:
+                if r.response_type == ResponseType.TYPE_KEY:
+                    (e, n) = r.data_edge_num()
+                    evt = KeyEvent(n, e)
+                    if (
+                        evt.number < _NEO_TRELLIS_NUM_KEYS
+                        and self.callbacks[evt.number] is not None
+                    ):
+                        self.callbacks[evt.number](evt)
+
+    def key_index(self, x, y):
+        return int((y - self.y_base) * self.width + (x - self.x_base))
 
