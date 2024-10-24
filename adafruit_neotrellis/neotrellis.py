@@ -113,6 +113,9 @@ class NeoTrellis(Keypad):
                     ):
                         self.callbacks[evt.number](evt)
 
+    def local_key_index(self, x, y):
+        return int(y * self.width + x)
+
     def key_index(self, x, y):
         return int((y - self.y_base) * self.width + (x - self.x_base))
 
