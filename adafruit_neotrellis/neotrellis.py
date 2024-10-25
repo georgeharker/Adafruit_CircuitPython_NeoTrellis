@@ -62,6 +62,7 @@ _NEO_TRELLIS_NUM_ROWS = const(8)
 _NEO_TRELLIS_NUM_COLS = const(8)
 _NEO_TRELLIS_NUM_KEYS = const(64)
 
+
 class NeoTrellis(Keypad):
     """Driver for the Adafruit NeoTrellis."""
 
