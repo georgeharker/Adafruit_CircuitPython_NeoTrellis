@@ -47,10 +47,12 @@ __version__ = "0.0.0-auto.0"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_neotrellis.git"
 
 from time import sleep
-from typing import List, Callable
-from micropython import const
-from adafruit_seesaw.keypad import Keypad, KeyEvent, SeesawKeyResponse, ResponseType
+from typing import Callable, List, Optional
+
+from adafruit_seesaw.keypad import KeyEvent, Keypad, ResponseType
 from adafruit_seesaw.neopixel import NeoPixel
+from micropython import const
+
 
 _NEO_TRELLIS_ADDR = const(0x2E)
 
@@ -68,8 +70,8 @@ class NeoTrellis(Keypad):
     x_base: int
     y_base: int
     interrupt_enabled: bool
-    callbacks: List[Callable[[KeyEvent], None]]
-    pixels: List[NeoPixel]
+    callbacks: List[Optional[Callable[[KeyEvent], None]]]
+    pixels: NeoPixel
 
     def __init__(self, i2c_bus, interrupt=False,
                  addr=_NEO_TRELLIS_ADDR, drdy=None,
@@ -107,11 +109,12 @@ class NeoTrellis(Keypad):
                 if r.response_type == ResponseType.TYPE_KEY:
                     (e, n) = r.data_edge_num()
                     evt = KeyEvent(n, e)
+                    callback = self.callbacks[evt.number]
                     if (
-                        evt.number < _NEO_TRELLIS_NUM_KEYS
-                        and self.callbacks[evt.number] is not None
+                        callback is not None
+                        and evt.number < _NEO_TRELLIS_NUM_KEYS
                     ):
-                        self.callbacks[evt.number](evt)
+                        callback(evt)
 
     def local_key_index(self, x, y):
         return int(y * self.width + x)
