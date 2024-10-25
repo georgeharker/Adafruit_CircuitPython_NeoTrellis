@@ -71,18 +71,16 @@ class MultiTrellis:
 
         self._width = col_size_sum[self._cols - 1]
         self._height = row_size_sum[self._rows - 1]
-        self._key_pads: List[List[NeoTrellis]] = [
-            [None for _ in range(self._width)]
-            for _ in range(self._height)]
+        self._key_pads: List[List[NeoTrellis]] = []
 
         for py in range(self._rows):
             for px in range(self._cols):
                 t = self._trelli[py][px]
                 for ky in range(t.height):
+                    y = t.y_base + ky
+                    self._key_pads.append([])
                     for kx in range(t.width):
-                        x = t.x_base + kx
-                        y = t.y_base + ky
-                        self._key_pads[y][x] = t
+                        self._key_pads[y].append(t)
 
     @property
     def width(self):
@@ -106,7 +104,7 @@ class MultiTrellis:
     def __getitem__(self, subscript: int) -> Sequence[NeoTrellis]:
         return self._trelli[subscript]
 
-    def get_key_pad(self, x: int, y: int) -> NeoTrellis:
+    def get_keypad(self, x: int, y: int) -> NeoTrellis:
         return self._key_pads[y][x]
 
     def activate_key(self, x, y, edge, enable=True):
