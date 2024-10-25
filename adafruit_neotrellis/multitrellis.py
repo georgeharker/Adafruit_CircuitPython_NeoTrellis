@@ -31,7 +31,8 @@ __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_neotrellis.git"
 
 from typing import List, Sequence
 
-from adafruit_neotrellis.neotrellis import NeoTrellis
+from adafruit_neotrellis.neotrellis import CallbackType, NeoTrellis
+from adafruit_seesaw.neopixel import PixelType
 
 
 class MultiTrellis:
@@ -42,7 +43,7 @@ class MultiTrellis:
     _cols: int
     _key_pads: List[List[NeoTrellis]]
 
-    def __init__(self, neotrellis_array):
+    def __init__(self, neotrellis_array: List[List[NeoTrellis]]):
         self._trelli = neotrellis_array
         self._rows = len(neotrellis_array)
         self._cols = len(neotrellis_array[0])
@@ -107,7 +108,7 @@ class MultiTrellis:
     def get_keypad(self, x: int, y: int) -> NeoTrellis:
         return self._key_pads[y][x]
 
-    def activate_key(self, x, y, edge, enable=True):
+    def activate_key(self, x: int, y: int, edge: int, enable: bool = True):
         """Activate or deactivate a key on the trellis. x and y are the index
         of the key measured from the top lefthand corner. Edge specifies what
         edge to register an event on and can be NeoTrellis.EDGE_FALLING or
@@ -116,13 +117,13 @@ class MultiTrellis:
         pad = self._key_pads[y][x]
         pad.activate_key(pad.key_index(x, y), enable)
 
-    def set_callback(self, x, y, function):
+    def set_callback(self, x: int, y: int, function: CallbackType):
         """Set a callback function for when an event for the key at index x, y
         (measured from the top lefthand corner) is detected."""
         pad = self._key_pads[y][x]
         pad.callbacks[pad.key_index(x, y)] = function
 
-    def color(self, x, y, color):
+    def color(self, x: int, y: int, color: PixelType):
         """Set the color of the pixel at index x, y measured from the top
         lefthand corner of the matrix"""
         pad = self._key_pads[y][x]
@@ -137,7 +138,7 @@ class MultiTrellis:
                     return True
         return False
 
-    def sync(self):
+    def sync(self) -> None:
         """Read all trellis boards in the matrix and call any callbacks"""
         for py in range(self._rows):
             for px in range(self._cols):

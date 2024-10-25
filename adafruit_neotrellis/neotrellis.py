@@ -63,6 +63,9 @@ _NEO_TRELLIS_NUM_COLS = const(8)
 _NEO_TRELLIS_NUM_KEYS = const(64)
 
 
+CallbackType = Callable[[KeyEvent], None]
+
+
 class NeoTrellis(Keypad):
     """Driver for the Adafruit NeoTrellis."""
 
@@ -71,7 +74,7 @@ class NeoTrellis(Keypad):
     x_base: int
     y_base: int
     interrupt_enabled: bool
-    callbacks: List[Optional[Callable[[KeyEvent], None]]]
+    callbacks: List[Optional[CallbackType]]
     pixels: NeoPixel
 
     def __init__(self, i2c_bus, interrupt=False,
