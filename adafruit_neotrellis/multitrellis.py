@@ -123,6 +123,13 @@ class MultiTrellis:
         pad = self._key_pads[y][x]
         pad.callbacks[pad.key_index(x, y)] = function
 
+
+    def get_callback(self, x: int, y: int) -> Optional[CallbackType]:
+        """Get a callback function for when an event for the key at index x, y
+        (measured from the top lefthand corner) is detected."""
+        pad = self._key_pads[y][x]
+        return pad.callbacks[pad.key_index(x, y)]
+
     def color(self, x: int, y: int, color: PixelType):
         """Set the color of the pixel at index x, y measured from the top
         lefthand corner of the matrix"""

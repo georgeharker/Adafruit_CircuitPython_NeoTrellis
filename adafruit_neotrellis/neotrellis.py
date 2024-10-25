@@ -91,7 +91,7 @@ class NeoTrellis(Keypad):
         self.callbacks = [None] * _NEO_TRELLIS_NUM_KEYS
         self.pixels = NeoPixel(self, _NEO_TRELLIS_NEOPIX_PIN, _NEO_TRELLIS_NUM_KEYS)
 
-    def activate_key(self, key, edge, enable=True):
+    def activate_key(self, key: int, edge: int, enable: bool = True):
         """Activate or deactivate a key on the trellis. Key is the key number from
            0 to 16. Edge specifies what edge to register an event on and can be
            NeoTrellis.EDGE_FALLING or NeoTrellis.EDGE_RISING. enable should be set
