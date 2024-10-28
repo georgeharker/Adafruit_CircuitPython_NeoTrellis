@@ -92,7 +92,7 @@ class NeoTrellis(Keypad):
         self.y_base = y_base
         self.interrupt_enabled = interrupt
         self.callbacks = [None] * _NEO_TRELLIS_NUM_KEYS
-        self.pixels = NeoPixel(self, _NEO_TRELLIS_NEOPIX_PIN, _NEO_TRELLIS_NUM_KEYS)
+        self.pixels = NeoPixel(self, _NEO_TRELLIS_NEOPIX_PIN, self.width * self.height)
 
     def activate_key(self, key: int, edge: int, enable: bool = True) -> None:
         """Activate or deactivate a key on the trellis. Key is the key number from
