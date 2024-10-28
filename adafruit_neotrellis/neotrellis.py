@@ -47,7 +47,7 @@ __version__ = "0.0.0-auto.0"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_neotrellis.git"
 
 from time import sleep
-from typing import Callable, List, Optional
+from typing import Callable, List, Optional, TypeAlias
 
 from adafruit_seesaw.keypad import KeyEvent, Keypad, ResponseType
 from adafruit_seesaw.neopixel import NeoPixel
@@ -63,7 +63,7 @@ _NEO_TRELLIS_NUM_COLS = const(8)
 _NEO_TRELLIS_NUM_KEYS = const(64)
 
 
-CallbackType = Callable[[KeyEvent], None]
+CallbackType: TypeAlias = Callable[[KeyEvent], None]
 
 
 class NeoTrellis(Keypad):
@@ -73,15 +73,18 @@ class NeoTrellis(Keypad):
     height: int
     x_base: int
     y_base: int
+    pad_x: int
+    pad_y: int
     interrupt_enabled: bool
     callbacks: List[Optional[CallbackType]]
     pixels: NeoPixel
 
-    def __init__(self, i2c_bus, interrupt=False,
-                 addr=_NEO_TRELLIS_ADDR, drdy=None,
-                 width=_NEO_TRELLIS_NUM_COLS,
-                 height=_NEO_TRELLIS_NUM_ROWS,
-                 x_base = 0, y_base = 0):
+    def __init__(self, i2c_bus, interrupt: bool = False,
+                 addr: int = _NEO_TRELLIS_ADDR, drdy = None,
+                 width: int = _NEO_TRELLIS_NUM_COLS,
+                 height: int = _NEO_TRELLIS_NUM_ROWS,
+                 x_base: int = 0, y_base: int = 0,
+                 pad_x: int = 0, pad_y: int = 0):
         super().__init__(i2c_bus, addr, drdy)
         self.width = width
         self.height = height
@@ -91,7 +94,7 @@ class NeoTrellis(Keypad):
         self.callbacks = [None] * _NEO_TRELLIS_NUM_KEYS
         self.pixels = NeoPixel(self, _NEO_TRELLIS_NEOPIX_PIN, _NEO_TRELLIS_NUM_KEYS)
 
-    def activate_key(self, key: int, edge: int, enable: bool = True):
+    def activate_key(self, key: int, edge: int, enable: bool = True) -> None:
         """Activate or deactivate a key on the trellis. Key is the key number from
            0 to 16. Edge specifies what edge to register an event on and can be
            NeoTrellis.EDGE_FALLING or NeoTrellis.EDGE_RISING. enable should be set
@@ -99,10 +102,13 @@ class NeoTrellis(Keypad):
            disabled."""
         self.set_event(key, edge, enable)
 
-    def clear(self):
+    def clear(self) -> None:
         self.pixels.fill((0, 0, 0))
 
-    def sync(self):
+    def show(self) -> None:
+        self.pixels.show()
+
+    def sync(self) -> None:
         """read any events from the Trellis hardware and call associated
            callbacks"""
         available = self.count
@@ -120,9 +126,9 @@ class NeoTrellis(Keypad):
                     ):
                         callback(evt)
 
-    def local_key_index(self, x, y):
+    def local_key_index(self, x, y) -> int:
         return int(y * self.width + x)
 
-    def key_index(self, x, y):
+    def key_index(self, x, y) -> int:
         return int((y - self.y_base) * self.width + (x - self.x_base))
 

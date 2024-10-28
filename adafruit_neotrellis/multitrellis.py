@@ -29,7 +29,7 @@ interface for connecting together multiple NeoTrellis boards.
 __version__ = "0.0.0-auto.0"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_neotrellis.git"
 
-from typing import List, Sequence
+from typing import List, Optional, Sequence
 
 from adafruit_neotrellis.neotrellis import CallbackType, NeoTrellis
 from adafruit_seesaw.neopixel import PixelType
@@ -69,6 +69,8 @@ class MultiTrellis:
 
                 t.x_base = x_base
                 t.y_base = y_base
+                t.pad_x = px
+                t.pad_y = py
 
         self._width = col_size_sum[self._cols - 1]
         self._height = row_size_sum[self._rows - 1]
@@ -122,7 +124,6 @@ class MultiTrellis:
         (measured from the top lefthand corner) is detected."""
         pad = self._key_pads[y][x]
         pad.callbacks[pad.key_index(x, y)] = function
-
 
     def get_callback(self, x: int, y: int) -> Optional[CallbackType]:
         """Get a callback function for when an event for the key at index x, y
