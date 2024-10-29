@@ -32,7 +32,7 @@ __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_neotrellis.git"
 from typing import List, Optional, Sequence
 
 from adafruit_neotrellis.neotrellis import CallbackType, NeoTrellis
-from adafruit_seesaw.neopixel import PixelType
+from adafruit_seesaw.neopixel import ColorType
 
 
 class MultiTrellis:
@@ -131,7 +131,7 @@ class MultiTrellis:
         pad = self._key_pads[y][x]
         return pad.callbacks[pad.key_index(x, y)]
 
-    def color(self, x: int, y: int, color: PixelType):
+    def color(self, x: int, y: int, color: ColorType):
         """Set the color of the pixel at index x, y measured from the top
         lefthand corner of the matrix"""
         pad = self._key_pads[y][x]
