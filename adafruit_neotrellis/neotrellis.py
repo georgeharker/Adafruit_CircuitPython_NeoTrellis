@@ -62,6 +62,8 @@ _NEO_TRELLIS_NUM_ROWS = const(8)
 _NEO_TRELLIS_NUM_COLS = const(8)
 _NEO_TRELLIS_NUM_KEYS = const(64)
 
+SYNC_DELAY = const(0.0005)
+INIT_DELAY = const(0.0005)
 
 CallbackType: TypeAlias = Callable[[KeyEvent], None]
 
@@ -93,6 +95,7 @@ class NeoTrellis(Keypad):
         self.interrupt_enabled = interrupt
         self.callbacks = [None] * _NEO_TRELLIS_NUM_KEYS
         self.pixels = NeoPixel(self, _NEO_TRELLIS_NEOPIX_PIN, self.width * self.height)
+        sleep(INIT_DELAY)
 
     def activate_key(self, key: int, edge: int, enable: bool = True) -> None:
         """Activate or deactivate a key on the trellis. Key is the key number from
@@ -112,7 +115,7 @@ class NeoTrellis(Keypad):
         """read any events from the Trellis hardware and call associated
            callbacks"""
         available = self.count
-        sleep(0.0005)       # FIXME: resolve
+        sleep(SYNC_DELAY)       # FIXME: resolve
         if available > 0:
             buf = self.read_keypad(available)
             for r in buf:
