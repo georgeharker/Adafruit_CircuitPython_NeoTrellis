@@ -47,10 +47,10 @@ __version__ = "0.0.0-auto.0"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_neotrellis.git"
 
 from time import sleep
-from typing import Callable, List, Optional, TypeAlias
+from typing import Callable, List, Optional, Sequence, Tuple, TypeAlias
 
 from adafruit_seesaw.keypad import KeyEvent, Keypad, ResponseType
-from adafruit_seesaw.neopixel import NeoPixel
+from adafruit_seesaw.neopixel import ColorType, NeoPixel
 from micropython import const
 
 
@@ -107,6 +107,14 @@ class NeoTrellis(Keypad):
 
     def clear(self) -> None:
         self.pixels.fill((0, 0, 0))
+
+    def color(self, key: int, color: ColorType):
+        """Set the color of the specified key """
+        self.pixels[key] = color
+
+    def update(self, updates: Sequence[Tuple[int, ColorType]]):
+        """Set the color of the specified keys """
+        self.pixels.update(updates)
 
     def show(self) -> None:
         self.pixels.show()
