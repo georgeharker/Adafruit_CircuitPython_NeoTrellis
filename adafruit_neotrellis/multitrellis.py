@@ -29,10 +29,23 @@ interface for connecting together multiple NeoTrellis boards.
 __version__ = "0.0.0-auto.0"
 __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_neotrellis.git"
 
-from typing import List, Optional, Sequence
+from dataclasses import dataclass
+from typing import Callable, List, Optional, Sequence, TypeAlias
 
-from adafruit_neotrellis.neotrellis import CallbackType, NeoTrellis
+from adafruit_neotrellis.neotrellis import KeyEvent as SeesawKeyEvent
+from adafruit_neotrellis.neotrellis import KeypadEdge  # noqa: F401
+from adafruit_neotrellis.neotrellis import NeoTrellis
 from adafruit_seesaw.neopixel import ColorType
+
+
+@dataclass
+class KeyEvent:
+    x: int
+    y: int
+    edge: int  # KeypadEdge
+
+
+CallbackType: TypeAlias = Callable[[KeyEvent], None]
 
 
 class MultiTrellis:
@@ -42,6 +55,7 @@ class MultiTrellis:
     _rows: int
     _cols: int
     _key_pads: List[List[NeoTrellis]]
+    _callbacks: List[List[Optional[CallbackType]]]
 
     def __init__(self, neotrellis_array: List[List[NeoTrellis]]):
         self._trelli = neotrellis_array
@@ -76,14 +90,22 @@ class MultiTrellis:
         self._height = row_size_sum[self._rows - 1]
         self._key_pads: List[List[NeoTrellis]] = []
 
+        for y in range(self._height):
+            self._key_pads.append([])
         for py in range(self._rows):
             for px in range(self._cols):
                 t = self._trelli[py][px]
                 for ky in range(t.height):
                     y = t.y_base + ky
-                    self._key_pads.append([])
                     for kx in range(t.width):
                         self._key_pads[y].append(t)
+
+    @staticmethod
+    def _callback_wrapper(t: NeoTrellis,
+                          event: SeesawKeyEvent,
+                          cb: CallbackType) -> None:
+        x, y = t.key_xy(event.number)
+        cb(KeyEvent(x=x, y=y, edge=event.edge))
 
     @property
     def width(self):
@@ -110,26 +132,28 @@ class MultiTrellis:
     def get_keypad(self, x: int, y: int) -> NeoTrellis:
         return self._key_pads[y][x]
 
-    def activate_key(self, x: int, y: int, edge: int, enable: bool = True):
+    def activate_key(self, x: int, y:
+                     int, edge:  # KeypadEdge
+                     int, enable: bool = True):
         """Activate or deactivate a key on the trellis. x and y are the index
         of the key measured from the top lefthand corner. Edge specifies what
         edge to register an event on and can be NeoTrellis.EDGE_FALLING or
         NeoTrellis.EDGE_RISING. enable should be set to True if the event is
         to be enabled, or False if the event is to be disabled."""
         pad = self._key_pads[y][x]
-        pad.activate_key(pad.key_index(x, y), enable)
+        pad.activate_key(pad.key_index(x, y), edge, enable)
 
     def set_callback(self, x: int, y: int, function: CallbackType):
         """Set a callback function for when an event for the key at index x, y
         (measured from the top lefthand corner) is detected."""
         pad = self._key_pads[y][x]
-        pad.callbacks[pad.key_index(x, y)] = function
+        self._callbacks[y][x] = function
+        pad.callbacks[pad.key_index(x, y)] = lambda t, e: self._callback_wrapper(t, e, function)
 
     def get_callback(self, x: int, y: int) -> Optional[CallbackType]:
         """Get a callback function for when an event for the key at index x, y
         (measured from the top lefthand corner) is detected."""
-        pad = self._key_pads[y][x]
-        return pad.callbacks[pad.key_index(x, y)]
+        return self._callbacks[y][x]
 
     def color(self, x: int, y: int, color: ColorType):
         """Set the color of the pixel at index x, y measured from the top

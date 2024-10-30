@@ -49,6 +49,7 @@ __repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_neotrellis.git"
 from time import sleep
 from typing import Callable, List, Optional, Sequence, Tuple, TypeAlias
 
+from adafruit_seesaw.keypad import KeypadEdge  # noqa: F401
 from adafruit_seesaw.keypad import KeyEvent, Keypad, ResponseType
 from adafruit_seesaw.neopixel import ColorType, NeoPixel
 from micropython import const
@@ -65,7 +66,7 @@ _NEO_TRELLIS_NUM_KEYS = const(64)
 SYNC_DELAY = const(0.0005)
 INIT_DELAY = const(0.0005)
 
-CallbackType: TypeAlias = Callable[[KeyEvent], None]
+CallbackType: TypeAlias = Callable[['NeoTrellis', KeyEvent], None]
 
 
 class NeoTrellis(Keypad):
@@ -97,7 +98,9 @@ class NeoTrellis(Keypad):
         self.pixels = NeoPixel(self, _NEO_TRELLIS_NEOPIX_PIN, self.width * self.height)
         sleep(INIT_DELAY)
 
-    def activate_key(self, key: int, edge: int, enable: bool = True) -> None:
+    def activate_key(self, key:
+                     int, edge:  # KeypadEdge
+                     int, enable: bool = True) -> None:
         """Activate or deactivate a key on the trellis. Key is the key number from
            0 to 16. Edge specifies what edge to register an event on and can be
            NeoTrellis.EDGE_FALLING or NeoTrellis.EDGE_RISING. enable should be set
@@ -128,14 +131,13 @@ class NeoTrellis(Keypad):
             buf = self.read_keypad(available)
             for r in buf:
                 if r.response_type == ResponseType.TYPE_KEY:
-                    (e, n) = r.data_edge_num()
-                    evt = KeyEvent(n, e)
+                    evt = r.data_keyevent()
                     callback = self.callbacks[evt.number]
                     if (
                         callback is not None
                         and evt.number < _NEO_TRELLIS_NUM_KEYS
                     ):
-                        callback(evt)
+                        callback(self, evt)
 
     def local_key_index(self, x: int, y: int) -> int:
         return int(y * self.width + x)
@@ -143,3 +145,8 @@ class NeoTrellis(Keypad):
     def key_index(self, x: int, y: int) -> int:
         return int((y - self.y_base) * self.width + (x - self.x_base))
 
+    def local_key_xy(self, key: int) -> Tuple[int, int]:
+        return key // self.width, key % self.width
+
+    def key_xy(self, key: int) -> Tuple[int, int]:
+        return self.y_base + key // self.width, self.x_base + key % self.width
