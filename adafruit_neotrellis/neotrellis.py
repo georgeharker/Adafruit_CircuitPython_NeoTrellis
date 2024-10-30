@@ -108,11 +108,11 @@ class NeoTrellis(Keypad):
     def clear(self) -> None:
         self.pixels.fill((0, 0, 0))
 
-    def color(self, key: int, color: ColorType):
+    def color(self, key: int, color: ColorType) -> None:
         """Set the color of the specified key """
         self.pixels[key] = color
 
-    def update(self, updates: Sequence[Tuple[int, ColorType]]):
+    def update(self, updates: Sequence[Tuple[int, ColorType]]) -> None:
         """Set the color of the specified keys """
         self.pixels.update(updates)
 
