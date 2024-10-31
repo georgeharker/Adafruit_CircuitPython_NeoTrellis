@@ -145,7 +145,7 @@ class NeoTrellis(Keypad):
         return int((y - self.y_base) * self.width + (x - self.x_base))
 
     def local_key_xy(self, key: int) -> Tuple[int, int]:
-        return key // self.width, key % self.width
+        return key % self.width, key // self.width
 
     def key_xy(self, key: int) -> Tuple[int, int]:
-        return self.y_base + key // self.width, self.x_base + key % self.width
+        return self.x_base + key % self.width, self.y_base + key // self.width
