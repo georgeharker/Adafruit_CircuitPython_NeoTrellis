@@ -133,8 +133,8 @@ class NeoTrellis(Keypad):
                     evt = r.data_keyevent()
                     callback = self.callbacks[evt.number]
                     if (
-                        callback is not None
-                        and evt.number < _NEO_TRELLIS_NUM_KEYS
+                        callback is not None and
+                        evt.number < _NEO_TRELLIS_NUM_KEYS
                     ):
                         callback(self, evt)
 
