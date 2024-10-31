@@ -44,7 +44,7 @@ Implementation Notes
 # imports
 
 __version__ = "0.0.0-auto.0"
-__repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_neotrellis.git"
+__repo__ = "https://github.com/georgeharker/Adafruit_CircuitPython_neotrellis.git"
 
 from time import sleep
 from typing import Callable, List, Optional, Sequence, Tuple, TypeAlias
@@ -78,7 +78,6 @@ class NeoTrellis(Keypad):
     y_base: int
     pad_x: int
     pad_y: int
-    interrupt_enabled: bool
     callbacks: List[Optional[CallbackType]]
     pixels: NeoPixel
 

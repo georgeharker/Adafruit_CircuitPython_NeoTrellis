@@ -27,7 +27,7 @@ interface for connecting together multiple NeoTrellis boards.
 # imports
 
 __version__ = "0.0.0-auto.0"
-__repo__ = "https://github.com/adafruit/Adafruit_CircuitPython_neotrellis.git"
+__repo__ = "https://github.com/georgeharker/Adafruit_CircuitPython_neotrellis.git"
 
 from dataclasses import dataclass
 from typing import Callable, List, Optional, Sequence, TypeAlias
