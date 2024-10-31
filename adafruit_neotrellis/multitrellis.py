@@ -132,6 +132,20 @@ class MultiTrellis:
     def get_keypad(self, x: int, y: int) -> NeoTrellis:
         return self._key_pads[y][x]
 
+    @property
+    def interrupt_enabled(self) -> bool:
+        for py in range(self._rows):
+            for px in range(self._cols):
+                if not self._trelli[py][px].interrupt_enabled:
+                    return False
+        return True
+
+    @interrupt_enabled.setter
+    def interrupt_enabled(self, enabled: bool) -> None:
+        for py in range(self._rows):
+            for px in range(self._cols):
+                self._trelli[py][px].interrupt_enabled = enabled
+
     def activate_key(self, x: int, y:
                      int, edge:  # KeypadEdge
                      int, enable: bool = True):
