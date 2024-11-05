@@ -89,6 +89,9 @@ class MultiTrellis:
         self._width = col_size_sum[self._cols - 1]
         self._height = row_size_sum[self._rows - 1]
         self._key_pads: List[List[NeoTrellis]] = []
+        self._callbacks: List[List[Optional[CallbackType]]] = [
+            [None for _ in range(self._width)] for _ in range(self._height)
+        ]
 
         for y in range(self._height):
             self._key_pads.append([])
