@@ -41,16 +41,24 @@ Implementation Notes
   https://github.com/adafruit/Adafruit_CircuitPython_seesaw/releases
 """
 
+from __future__ import annotations
+
+
 # imports
 
 __version__ = "0.0.0-auto.0"
 __repo__ = "https://github.com/georgeharker/Adafruit_CircuitPython_neotrellis.git"
 
-from time import sleep
-from typing import Callable, List, Optional, Sequence, Tuple, TypeAlias
 
-from adafruit_seesaw.keypad import KeypadEdge  # noqa: F401
-from adafruit_seesaw.keypad import KeyEvent, Keypad, ResponseType
+from time import sleep
+from typing import Callable, List, Optional, Sequence, Tuple
+
+from adafruit_seesaw.keypad import (
+    KeyEvent,
+    Keypad,
+    KeypadEdge,  # noqa: F401
+    ResponseType,
+)
 from adafruit_seesaw.neopixel import ColorType, NeoPixel
 from micropython import const
 
@@ -66,7 +74,7 @@ _NEO_TRELLIS_NUM_KEYS = const(64)
 SYNC_DELAY = const(0.0005)
 INIT_DELAY = const(0.0005)
 
-CallbackType: TypeAlias = Callable[['NeoTrellis', KeyEvent], None]
+type CallbackType = Callable[['NeoTrellis', KeyEvent], None]
 
 
 class NeoTrellis(Keypad):
@@ -82,7 +90,7 @@ class NeoTrellis(Keypad):
     pixels: NeoPixel
 
     def __init__(self, i2c_bus, interrupt: bool = False,
-                 addr: int = _NEO_TRELLIS_ADDR, drdy = None,
+                 addr: int = _NEO_TRELLIS_ADDR, drdy=None,
                  width: int = _NEO_TRELLIS_NUM_COLS,
                  height: int = _NEO_TRELLIS_NUM_ROWS,
                  x_base: int = 0, y_base: int = 0,

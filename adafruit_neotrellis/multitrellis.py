@@ -30,12 +30,15 @@ __version__ = "0.0.0-auto.0"
 __repo__ = "https://github.com/georgeharker/Adafruit_CircuitPython_neotrellis.git"
 
 from dataclasses import dataclass
-from typing import Callable, List, Optional, Sequence, TypeAlias
+from typing import Callable, List, Optional, Sequence
+
+from adafruit_seesaw.neopixel import ColorType
 
 from adafruit_neotrellis.neotrellis import KeyEvent as SeesawKeyEvent
-from adafruit_neotrellis.neotrellis import KeypadEdge  # noqa: F401
-from adafruit_neotrellis.neotrellis import NeoTrellis
-from adafruit_seesaw.neopixel import ColorType
+from adafruit_neotrellis.neotrellis import (
+    KeypadEdge,  # noqa: F401
+    NeoTrellis,
+)
 
 
 @dataclass
@@ -45,7 +48,7 @@ class KeyEvent:
     edge: int  # KeypadEdge
 
 
-CallbackType: TypeAlias = Callable[[KeyEvent], None]
+type CallbackType = Callable[[KeyEvent], None]
 
 
 class MultiTrellis:
@@ -93,14 +96,14 @@ class MultiTrellis:
             [None for _ in range(self._width)] for _ in range(self._height)
         ]
 
-        for y in range(self._height):
+        for _y in range(self._height):
             self._key_pads.append([])
         for py in range(self._rows):
             for px in range(self._cols):
                 t = self._trelli[py][px]
                 for ky in range(t.height):
                     y = t.y_base + ky
-                    for kx in range(t.width):
+                    for _kx in range(t.width):
                         self._key_pads[y].append(t)
 
     @staticmethod
