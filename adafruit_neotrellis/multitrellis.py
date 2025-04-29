@@ -195,3 +195,7 @@ class MultiTrellis:
         for py in range(self._rows):
             for px in range(self._cols):
                 self._trelli[py][px].sync()
+
+    def pixels_updated(self) -> None:
+        """To be called after pixels are updated"""
+        pass
